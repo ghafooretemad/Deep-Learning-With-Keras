@@ -1,3 +1,7 @@
+# traingin a simple sequential keras model to classify weather a medicin has negative impact on a person or not, 
+# the medicin doesn't have negative impact on the people with age of 13-50 
+# the medicin has negative impact on the people with age of 50-100
+
 import numpy as np
 from random import randint
 from sklearn.preprocessing import MinMaxScaler
