@@ -1,4 +1,4 @@
-# traingin a simple sequential keras model to classify weather a medicin has negative impact on a person or not, 
+# training a simple sequential keras model to classify weather a medicin has negative impact on a person or not
 # the medicin doesn't have negative impact on the people with age of 13-50 
 # the medicin has negative impact on the people with age of 50-100
 
@@ -32,14 +32,16 @@ samples = np.array(train_samples)
 # scale the sample data between the range of 0 and 1
 scaler = MinMaxScaler(feature_range = (0,1))
 scaled_train_samples = scaler.fit_transform((samples).reshape(-1,1))
-
+# creating simple sequential model with 4 layers, each layer uses different activation functions like relu, sigmoid
 model = Sequential()
 model.add(Dense(10, activation = "relu", input_dim = 1))
 model.add(Dense(8, activation = "sigmoid"))
 model.add(Dense(4, activation = "relu"))
 model.add(Dense(1, activation = "sigmoid"))
 
+# complie the model 
 model.compile(optimizer = "rmsprop",
              loss = "binary_crossentropy",
              metrics = ["accuracy"])
+# train the model with the sample data and validate the model with the 10% of the data, this specified by the validation_split=0.1
 model.fit(scaled_train_samples, lables, epochs =20,batch_size = 10, validation_split = 0.1)
