@@ -1,7 +1,10 @@
 # training a simple sequential keras model to classify weather a medicin has negative impact on a person or not
 # the medicin doesn't have negative impact on the people with age of 13-50 
 # the medicin has negative impact on the people with age of 50-100
-
+%matplotlib inline
+from sklearn.metrics import confusion_matrix
+import itertools
+import matplotlib.pyplot as plt 
 import numpy as np
 from random import randint
 from sklearn.preprocessing import MinMaxScaler
@@ -15,6 +18,7 @@ from keras.metrics import categorical_crossentropy
 train_lables = []
 train_samples = []
 t_samples = []
+t_lables = []
 # generating random data for tow category of the age(young people, old people) withen 13-100 years age
 for i in range(10000):
     young_age = randint(13,50)
@@ -28,14 +32,18 @@ for i in range(10000):
 for row in range(300):
     young_age = randint(13,50)
     t_samples.append(young_age)
-    
+    t_lables.append(1)
+
     old_age = randint(50,100)
     t_samples.append(old_age)
+    t_lables.append(0)
 
 #     keras model accept the trianing sample in the form of numpy array, here we convert python list to numpy array
 lables = np.array(train_lables)
 samples = np.array(train_samples)
 test_samples = np.array(t_samples)
+test_lables = np.array(t_lables)
+
 # scale the sample data between the range of 0 and 1
 scaler = MinMaxScaler(feature_range = (0,1))
 scaled_train_samples = scaler.fit_transform((samples).reshape(-1,1))
@@ -61,3 +69,44 @@ prediction = model.predict_classes(scaled_test_samples, batch_size = 5)
 # print the classes of the each sample 
 for row in prediction:
     print(row)
+
+#     this function draws the confusion matrix 
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    plt.tight_layout()
+# creating  confusion matrix    
+cm  = confusion_matrix(test_lables, prediction)
+# adding lables
+lbls = ["Nigative impact", "not impact"]
+# ploting the confusion matrix
+plot_confusion_matrix(cm, lbls)
