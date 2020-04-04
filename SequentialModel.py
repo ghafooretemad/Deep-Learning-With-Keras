@@ -9,6 +9,7 @@ import numpy as np
 from random import randint
 from sklearn.preprocessing import MinMaxScaler
 import keras
+from keras.models import load_model
 from keras.models import Sequential
 from keras.layers import Activation
 from keras.layers.core import Dense
@@ -110,3 +111,15 @@ cm  = confusion_matrix(test_lables, prediction)
 lbls = ["Nigative impact", "not impact"]
 # ploting the confusion matrix
 plot_confusion_matrix(cm, lbls)
+
+# save the architecture, weight, optimizer and configuration of the model
+model.save("mTrained_model.h5")
+# load the saved model to the new model
+new_model = load_model("mTrained_model.h5")
+# predict the same test data using the new loaded model
+nprediction = new_model.predict_classes(scaled_test_samples, batch_size = 5)
+# draw the confusion matrix for this new model also
+cm  = confusion_matrix(test_lables, nprediction)
+lbls = ["Nigative impact", "not impact"]
+plot_confusion_matrix(cm, lbls)
+# the confusion matrix is same for both of the model
